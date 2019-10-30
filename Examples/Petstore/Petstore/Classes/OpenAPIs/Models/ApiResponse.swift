@@ -7,20 +7,15 @@
 
 import Foundation
 
-
-
-public struct ApiResponse: Codable, Hashable {
+public struct ApiResponse: Codable {
 
     public var code: Int?
     public var type: String?
     public var message: String?
-
     public init(code: Int?, type: String?, message: String?) {
         self.code = code
         self.type = type
         self.message = message
     }
 
-
 }
-

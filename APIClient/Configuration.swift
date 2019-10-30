@@ -12,7 +12,7 @@ public struct Configuration {
     public init(dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .iso8601,
                 dataDecodingStrategy: JSONDecoder.DataDecodingStrategy = .base64,
                 timeoutIntervalForRequest: TimeInterval = 60,
-                timeoutIntervalForResource: TimeInterval = 604800,
+                timeoutIntervalForResource: TimeInterval = 604_800,
                 queue: DispatchQueue = DispatchQueue.main) {
         self.dateDecodingStrategy = dateDecodingStrategy
         self.dataDecodingStrategy = dataDecodingStrategy

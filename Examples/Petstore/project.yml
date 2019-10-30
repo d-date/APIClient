@@ -1,0 +1,17 @@
+name: PetStore
+targets:
+  PetStore:
+    type: framework
+    platform: iOS
+    deploymentTarget: "10.0"
+    sources: [PetStore]
+    info:
+      path: ./Info.plist
+      version: 1.0.3
+    settings:
+      ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: ${inherited}
+      CODE_SIGN_STYLE: Automatic
+      PRODUCT_BUNDLE_IDENTIFIER: com.d-date.PetStore
+      APPLICATION_EXTENSION_API_ONLY: true
+      SWIFT_VERSION: 5.0
+    scheme: {}

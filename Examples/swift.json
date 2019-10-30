@@ -1,0 +1,7 @@
+{
+  "podSummary": "API Clinent for Petstore",
+  "podHomepage": "https://github.com/d-date/APIClient",
+  "podAuthors": "Daiki Matsudate",
+  "projectName": "PetStore",
+  "bundleIdentifier": "com.d-date.PetStore"
+}

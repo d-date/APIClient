@@ -1,10 +1,10 @@
-platform :ios, '9.0'
+platform :ios, '10.0'
 
 target 'APIClient' do
   use_frameworks!
 
   target 'APIClientTests' do
     inherit! :search_paths
-    pod 'Petstore', path: './Examples/Petstore/Petstore.podspec'
+    pod 'PetStore', path: './Examples/PetStore/PetStore.podspec'
   end
 end

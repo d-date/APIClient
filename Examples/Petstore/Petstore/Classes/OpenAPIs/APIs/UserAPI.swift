@@ -7,46 +7,51 @@
 
 import Foundation
 
-
-open class UserAPI {
+public struct UserAPI {
     /**
      Create user
      - POST /user
      - This can only be done by the logged in user.
-     - parameter user: (body) Created user object 
-     - returns: RequestProvider<Void> 
+     - parameter body: (body) Created user object 
+     - returns: RequestBuilder<Void> 
      */
-    open class func createUser(user: User) -> RequestProvider<Void> {
+    public static func createUser(body: User) -> RequestBuilder<Void> {
         let path = "/user"
-        let parameters = user
-
-        return RequestProvider<Void>(endpoint: path, method: "POST", parameters: RequestProvider.Parameters(parameters))
+        let parameters = Parameters(
+            query: nil,
+            form: nil,
+            body: AnyEncodable(body))
+        return RequestBuilder<Void>(endpoint: path, method: "POST", parameters: parameters)
     }
 
     /**
      Creates list of users with given input array
      - POST /user/createWithArray
-     - parameter user: (body) List of user object 
-     - returns: RequestProvider<Void> 
+     - parameter body: (body) List of user object 
+     - returns: RequestBuilder<Void> 
      */
-    open class func createUsersWithArrayInput(user: [User]) -> RequestProvider<Void> {
+    public static func createUsersWithArrayInput(body: [User]) -> RequestBuilder<Void> {
         let path = "/user/createWithArray"
-        let parameters = user
-
-        return RequestProvider<Void>(endpoint: path, method: "POST", parameters: RequestProvider.Parameters(parameters))
+        let parameters = Parameters(
+            query: nil,
+            form: nil,
+            body: AnyEncodable(body))
+        return RequestBuilder<Void>(endpoint: path, method: "POST", parameters: parameters)
     }
 
     /**
      Creates list of users with given input array
      - POST /user/createWithList
-     - parameter user: (body) List of user object 
-     - returns: RequestProvider<Void> 
+     - parameter body: (body) List of user object 
+     - returns: RequestBuilder<Void> 
      */
-    open class func createUsersWithListInput(user: [User]) -> RequestProvider<Void> {
+    public static func createUsersWithListInput(body: [User]) -> RequestBuilder<Void> {
         let path = "/user/createWithList"
-        let parameters = user
-
-        return RequestProvider<Void>(endpoint: path, method: "POST", parameters: RequestProvider.Parameters(parameters))
+        let parameters = Parameters(
+            query: nil,
+            form: nil,
+            body: AnyEncodable(body))
+        return RequestBuilder<Void>(endpoint: path, method: "POST", parameters: parameters)
     }
 
     /**
@@ -54,30 +59,34 @@ open class UserAPI {
      - DELETE /user/{username}
      - This can only be done by the logged in user.
      - parameter username: (path) The name that needs to be deleted 
-     - returns: RequestProvider<Void> 
+     - returns: RequestBuilder<Void> 
      */
-    open class func deleteUser(username: String) -> RequestProvider<Void> {
+    public static func deleteUser(username: String) -> RequestBuilder<Void> {
         var path = "/user/{username}"
-        let usernamePreEscape = "\(username)"
-        let usernamePostEscape = usernamePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: "{username}", with: usernamePostEscape, options: .literal, range: nil)
-        
-        return RequestProvider<Void>(endpoint: path, method: "DELETE")
+        let usernameEscaped = "\(username)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{username}", with: usernameEscaped, options: .literal, range: nil)
+        let parameters = Parameters(
+            query: nil,
+            form: nil,
+            body: nil)
+        return RequestBuilder<Void>(endpoint: path, method: "DELETE", parameters: parameters)
     }
 
     /**
      Get user by user name
      - GET /user/{username}
      - parameter username: (path) The name that needs to be fetched. Use user1 for testing.  
-     - returns: RequestProvider<User> 
+     - returns: RequestBuilder<User> 
      */
-    open class func getUserByName(username: String) -> RequestProvider<User> {
+    public static func getUserByName(username: String) -> RequestBuilder<User> {
         var path = "/user/{username}"
-        let usernamePreEscape = "\(username)"
-        let usernamePostEscape = usernamePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: "{username}", with: usernamePostEscape, options: .literal, range: nil)
-        
-        return RequestProvider<User>(endpoint: path, method: "GET")
+        let usernameEscaped = "\(username)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{username}", with: usernameEscaped, options: .literal, range: nil)
+        let parameters = Parameters(
+            query: nil,
+            form: nil,
+            body: nil)
+        return RequestBuilder<User>(endpoint: path, method: "GET", parameters: parameters)
     }
 
     /**
@@ -86,27 +95,25 @@ open class UserAPI {
      - responseHeaders: [X-Rate-Limit(Int), X-Expires-After(Date)]
      - parameter username: (query) The user name for login 
      - parameter password: (query) The password for login in clear text 
-     - returns: RequestProvider<String> 
+     - returns: RequestBuilder<String> 
      */
-    open class func loginUser(username: String, password: String) -> RequestProvider<String> {
+    public static func loginUser(username: String, password: String) -> RequestBuilder<String> {
         let path = "/user/login"
-        
-        let parameters: [String: Any?] = [
-            "username": username, 
-            "password": password
-        ]
-        return RequestProvider<String>(endpoint: path, method: "GET", parameters: RequestProvider.Parameters(parameters))
+        let parameters = Parameters(
+            query: ["username": username, "password": password],
+            form: nil,
+            body: nil)
+        return RequestBuilder<String>(endpoint: path, method: "GET", parameters: parameters)
     }
 
     /**
      Logs out current logged in user session
      - GET /user/logout
-     - returns: RequestProvider<Void> 
+     - returns: RequestBuilder<Void> 
      */
-    open class func logoutUser() -> RequestProvider<Void> {
+    public static func logoutUser() -> RequestBuilder<Void> {
         let path = "/user/logout"
-        
-        return RequestProvider<Void>(endpoint: path, method: "GET")
+        return RequestBuilder<Void>(endpoint: path, method: "GET")
     }
 
     /**
@@ -114,17 +121,18 @@ open class UserAPI {
      - PUT /user/{username}
      - This can only be done by the logged in user.
      - parameter username: (path) name that need to be updated 
-     - parameter user: (body) Updated user object 
-     - returns: RequestProvider<Void> 
+     - parameter body: (body) Updated user object 
+     - returns: RequestBuilder<Void> 
      */
-    open class func updateUser(username: String, user: User) -> RequestProvider<Void> {
+    public static func updateUser(username: String, body: User) -> RequestBuilder<Void> {
         var path = "/user/{username}"
-        let usernamePreEscape = "\(username)"
-        let usernamePostEscape = usernamePreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: "{username}", with: usernamePostEscape, options: .literal, range: nil)
-        let parameters = user
-
-        return RequestProvider<Void>(endpoint: path, method: "PUT", parameters: RequestProvider.Parameters(parameters))
+        let usernameEscaped = "\(username)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{username}", with: usernameEscaped, options: .literal, range: nil)
+        let parameters = Parameters(
+            query: nil,
+            form: nil,
+            body: AnyEncodable(body))
+        return RequestBuilder<Void>(endpoint: path, method: "PUT", parameters: parameters)
     }
 
 }

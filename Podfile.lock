@@ -1,16 +1,16 @@
 PODS:
-  - Petstore (0.0.1)
+  - PetStore (1.0.3)
 
 DEPENDENCIES:
-  - Petstore (from `./Examples/Petstore/Petstore.podspec`)
+  - PetStore (from `./Examples/PetStore/PetStore.podspec`)
 
 EXTERNAL SOURCES:
-  Petstore:
-    :path: "./Examples/Petstore/Petstore.podspec"
+  PetStore:
+    :path: "./Examples/PetStore/PetStore.podspec"
 
 SPEC CHECKSUMS:
-  Petstore: ec706bff33363b3c258b0876db2af164d2b0ff8d
+  PetStore: ffb1cbbdd1aff5106faa009555821122db8c7e98
 
-PODFILE CHECKSUM: 6b84d074caed2adcec012db690d8a04e8e833c39
+PODFILE CHECKSUM: 5c30cc4e4848ec68e1d73d5bfb40325ac69596f1
 
-COCOAPODS: 1.7.0.beta.3
+COCOAPODS: 1.8.0.beta.2

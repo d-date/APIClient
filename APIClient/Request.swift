@@ -11,27 +11,26 @@ public struct Request<ResponseBody> {
         self.parameters = parameters
     }
 
-    public enum Parameters {
-        case query([String: Any?])
-        case form([String: String?])
-        case json(Data?)
+    public struct Parameters {
+        public let query: [String: Any?]?
+        public let form: [String: String?]?
+        public let json: Data?
 
-        public init(_ raw: [String: Any?]) {
-            self = .query(raw)
-        }
+        public init<T: Encodable>(query: [String: Any?]?, form: [String: String?]?, jsonRaw: T?, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .iso8601, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy = .base64) {
+            self.query = query
+            self.form = form
 
-        public init(_ raw: [String: String?]) {
-            self = .form(raw)
-        }
-
-        public init<T: Encodable>(_ raw: T, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .iso8601, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy = .base64) {
-            let encoder = JSONEncoder()
-            encoder.dateEncodingStrategy = dateEncodingStrategy
-            encoder.dataEncodingStrategy = dataEncodingStrategy
-            if let data = try? encoder.encode(raw) {
-                self = .json(data)
+            if let jsonRaw = jsonRaw {
+                let encoder = JSONEncoder()
+                encoder.dateEncodingStrategy = dateEncodingStrategy
+                encoder.dataEncodingStrategy = dataEncodingStrategy
+                if let data = try? encoder.encode(jsonRaw) {
+                    self.json = data
+                } else {
+                    self.json = nil
+                }
             } else {
-                self = .json(nil)
+                self.json = nil
             }
         }
     }
@@ -42,47 +41,53 @@ public struct Request<ResponseBody> {
         var request = URLRequest(url: url)
         request.httpMethod = method.description
 
-        if let parameters = parameters {
-            switch parameters {
-            case .query(let raw):
-                if var components = URLComponents(url: url, resolvingAgainstBaseURL: false) {
-                    var queryItems = [URLQueryItem]()
-                    for (key, value) in raw {
-                        switch value {
-                        case let values as [Any?]:
-                            queryItems.append(contentsOf: values.compactMap {
-                                if let value = $0 {
-                                    return URLQueryItem(name: key, value: "\(value)")
-                                }
-                                return nil
-                            })
-                        case let value?:
-                            queryItems.append(URLQueryItem(name: key, value: "\(value)"))
-                        default:
-                            break
-                        }
-                    }
-                    components.queryItems = queryItems
-                    request.url = components.url
-                }
-            case .form(let raw):
-                var components = URLComponents()
-                components.queryItems = raw.compactMap {
-                    if let value = $0.value {
-                        return URLQueryItem(name: $0.key, value: value.addingPercentEncoding(withAllowedCharacters: .alphanumerics))
-                    }
-                    return nil
-                }
+        guard let parameters = parameters,
+            var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return request
+        }
 
-                if let query = components.query {
-                    request.addValue("application/x-www-form-urlencoded; charset=utf-8", forHTTPHeaderField: "Content-Type")
-                    request.httpBody = query.data(using: .utf8)
+        if let query = parameters.query {
+            var queryItems = [URLQueryItem]()
+            for (key, value) in query {
+                switch value {
+                case let values as [Any?]:
+                    let items: [URLQueryItem] = values.compactMap {
+                        if let value = $0 {
+                            return URLQueryItem(name: key, value: "\(value)")
+                        }
+                        return nil
+                    }
+                    queryItems.append(contentsOf: items)
+
+                case let value?:
+                    queryItems.append(URLQueryItem(name: key, value: "\(value)"))
+
+                default:
+                    break
                 }
-            case .json(let data):
-                request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
-                request.httpBody = data
+            }
+            components.queryItems = queryItems
+        }
+        if let raw = parameters.form {
+            components.queryItems?.append(contentsOf: raw.compactMap {
+                if let value = $0.value {
+                    return URLQueryItem(name: $0.key, value: value.addingPercentEncoding(withAllowedCharacters: .alphanumerics))
+                }
+                return nil
+            })
+
+            if let query = components.query {
+                request.addValue("application/x-www-form-urlencoded; charset=utf-8", forHTTPHeaderField: "Content-Type")
+                request.httpBody = query.data(using: .utf8)
             }
         }
+
+        if let json = parameters.json {
+            request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
+            request.httpBody = json
+        }
+
+        request.url = components.url
 
         return request
     }

@@ -2,14 +2,14 @@ import Foundation
 
 public class Client {
     public let baseURL: URL
-    public let headers: [AnyHashable: Any]
+    public var headers: [AnyHashable: Any]
     public let configuration: Configuration
 
     public var authenticator: Authenticating?
     public var interceptors = [Intercepting]()
 
     private let session: URLSession
-    private let queue = DispatchQueue.init(label: "com.folio-sec.api-client", qos: .userInitiated)
+    private let queue = DispatchQueue.init(label: "com.d-date.APIClient", qos: .userInitiated)
     private let taskExecutor = TaskExecutor()
 
     private var pendingRequests = [PendingRequest]()
@@ -51,16 +51,16 @@ public class Client {
     }
 
     private func perform<ResponseBody>(request: URLRequest, completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
-        interceptRequest(interceptors: self.interceptors, request: request) { [weak self] (request) in
+        interceptRequest(interceptors: self.interceptors, request: request) { [weak self] request in
             guard let self = self else { return }
 
-            let task = self.session.dataTask(with: request) { [weak self] (data, response, error) in
+            let task = self.session.dataTask(with: request) { [weak self] data, response, error in
                 guard let self = self else { return }
 
                 self.queue.async { [weak self] in
                     guard let self = self else { return }
 
-                    self.interceptResponse(interceptors: self.interceptors, request: request, response: response, data: data, error: error) { [weak self] (response, data, error) in
+                    self.interceptResponse(interceptors: self.interceptors, request: request, response: response, data: data, error: error) { [weak self] response, data, error in
                         guard let self = self else { return }
 
                         self.queue.async { [weak self] in
@@ -93,14 +93,19 @@ public class Client {
                 switch ResponseBody.self {
                 case is String.Type:
                     q.async {
+                        //swiftlint:disable:next force_cast
                         completion(.success(Response(statusCode: response.statusCode, headers: response.allHeaderFields, body: (String(data: data, encoding: .utf8) ?? "") as! ResponseBody)))
                     }
+
                 case is Void.Type:
                     q.async {
+                        //swiftlint:disable:next force_cast
                         completion(.success(Response(statusCode: response.statusCode, headers: response.allHeaderFields, body: () as! ResponseBody)))
                     }
+
                 case let decodableType as Decodable.Type:
                     do {
+                        //swiftlint:disable:next force_cast
                         let responseBody = try decodableType.init(decoder: decoder, data: data) as! ResponseBody
                         q.async {
                             completion(.success(Response(statusCode: response.statusCode, headers: response.allHeaderFields, body: responseBody)))
@@ -110,6 +115,7 @@ public class Client {
                             completion(.failure(.decodingError(error, response.statusCode, response.allHeaderFields, data)))
                         }
                     }
+
                 default:
                     fatalError("unexpected response type: \(ResponseBody.self)")
                 }
@@ -120,7 +126,7 @@ public class Client {
                     if !isRetrying {
                         isRetrying = true
 
-                        self.authenticate(authenticator: authenticator, request: request, response: response, data: data) { [weak self] (result) in
+                        self.authenticate(authenticator: authenticator, request: request, response: response, data: data) { [weak self] result in
                             guard let self = self else { return }
 
                             self.queue.async { [weak self] in
@@ -130,11 +136,13 @@ public class Client {
                                 case .success(let request):
                                     self.perform(request: request, completion: completion)
                                     self.retryPendingRequests()
+
                                 case .failure(let error):
                                     q.async {
                                         completion(.failure(error))
                                     }
                                     self.failPendingRequests(error)
+
                                 case .cancel:
                                     let error = Failure.responseError(statusCode, response.allHeaderFields, data)
                                     q.async {
@@ -147,10 +155,12 @@ public class Client {
                             }
                         }
                     } else {
-                        let pendingRequest = PendingRequest(request: request,
-                                                            retry: { self.perform(request: request, completion: completion) },
-                                                            fail: { (error) in q.async { completion(.failure(error)) } },
-                                                            cancel: { _ in q.async { completion(.failure(.responseError(statusCode, response.allHeaderFields, data))) } })
+                        let pendingRequest = PendingRequest(
+                            request: request,
+                            retry: { self.perform(request: request, completion: completion) },
+                            fail: { error in q.async { completion(.failure(error)) } },
+                            cancel: { _ in q.async { completion(.failure(.responseError(statusCode, response.allHeaderFields, data))) }
+                            })
                         pendingRequests.append(pendingRequest)
                     }
                 } else {
@@ -162,6 +172,7 @@ public class Client {
                 q.async {
                     completion(.failure(.responseError(statusCode, response.allHeaderFields, data)))
                 }
+
             default:
                 break
             }
@@ -246,13 +257,14 @@ private class TaskExecutor {
             switch runningTask.value.sessionTask.state {
             case .running, .suspended, .canceling:
                 break
+
             case .completed:
                 runningTasks[runningTask.key] = nil
             @unknown default:
                 break
             }
         }
-        while tasks.count > 0 && runningTasks.count <= maxConcurrentTasks {
+        while !tasks.isEmpty && runningTasks.count <= maxConcurrentTasks {
             let task = tasks.removeLast()
             task.sessionTask.resume()
             runningTasks[task.taskIdentifier] = task

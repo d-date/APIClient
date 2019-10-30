@@ -1,22 +1,18 @@
 {
-  "name": "Petstore",
+  "name": "PetStore",
   "platforms": {
     "ios": "9.0",
     "osx": "10.11",
     "tvos": "9.0"
   },
-  "version": "0.0.1",
+  "version": "1.0.3",
   "source": {
-    "git": "git@github.com:openapitools/openapi-generator.git",
-    "tag": "v1.0.0"
+    "git": "git@github.com:OpenAPITools/openapi-generator.git",
+    "tag": "v1.0.3"
   },
-  "authors": "OpenAPI Generator",
+  "authors": "Daiki Matsudate",
   "license": "Proprietary",
-  "homepage": "https://github.com/folio-sec/APIClient",
-  "summary": "Swagger Petstore",
-  "source_files": [
-    "Petstore/Classes/**/APIs.swift",
-    "Petstore/Classes/**/APIs/*.swift",
-    "Petstore/Classes/**/Models/*.swift"
-  ]
+  "homepage": "https://github.com/d-date/APIClient",
+  "summary": "API Clinent for PetStore",
+  "source_files": "PetStore/Classes/**/*.swift"
 }

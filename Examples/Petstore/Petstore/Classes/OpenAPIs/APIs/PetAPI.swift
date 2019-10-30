@@ -7,22 +7,23 @@
 
 import Foundation
 
-
-open class PetAPI {
+public struct PetAPI {
     /**
      Add a new pet to the store
      - POST /pet
      - OAuth:
        - type: oauth2
        - name: petstore_auth
-     - parameter pet: (body) Pet object that needs to be added to the store 
-     - returns: RequestProvider<Void> 
+     - parameter body: (body) Pet object that needs to be added to the store 
+     - returns: RequestBuilder<Void> 
      */
-    open class func addPet(pet: Pet) -> RequestProvider<Void> {
+    public static func addPet(body: Pet) -> RequestBuilder<Void> {
         let path = "/pet"
-        let parameters = pet
-
-        return RequestProvider<Void>(endpoint: path, method: "POST", parameters: RequestProvider.Parameters(parameters))
+        let parameters = Parameters(
+            query: nil,
+            form: nil,
+            body: AnyEncodable(body))
+        return RequestBuilder<Void>(endpoint: path, method: "POST", parameters: parameters)
     }
 
     /**
@@ -33,15 +34,26 @@ open class PetAPI {
        - name: petstore_auth
      - parameter petId: (path) Pet id to delete 
      - parameter apiKey: (header)  (optional)
-     - returns: RequestProvider<Void> 
+     - returns: RequestBuilder<Void> 
      */
-    open class func deletePet(petId: Int64, apiKey: String? = nil) -> RequestProvider<Void> {
+    public static func deletePet(petId: Int64, apiKey: String? = nil) -> RequestBuilder<Void> {
         var path = "/pet/{petId}"
-        let petIdPreEscape = "\(petId)"
-        let petIdPostEscape = petIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: "{petId}", with: petIdPostEscape, options: .literal, range: nil)
-        
-        return RequestProvider<Void>(endpoint: path, method: "DELETE")
+        let petIdEscaped = "\(petId)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{petId}", with: petIdEscaped, options: .literal, range: nil)
+        let parameters = Parameters(
+            query: nil,
+            form: nil,
+            body: nil)
+        return RequestBuilder<Void>(endpoint: path, method: "DELETE", parameters: parameters)
+    }
+
+    /**
+     * enum for parameter status
+     */
+    public enum Status_findPetsByStatus: String {
+        case available = "available"
+        case pending = "pending"
+        case sold = "sold"
     }
 
     /**
@@ -52,15 +64,15 @@ open class PetAPI {
        - type: oauth2
        - name: petstore_auth
      - parameter status: (query) Status values that need to be considered for filter 
-     - returns: RequestProvider<[Pet]> 
+     - returns: RequestBuilder<[Pet]> 
      */
-    open class func findPetsByStatus(status: [String]) -> RequestProvider<[Pet]> {
+    public static func findPetsByStatus(status: [String]) -> RequestBuilder<[Pet]> {
         let path = "/pet/findByStatus"
-        
-        let parameters: [String: Any?] = [
-            "status": status
-        ]
-        return RequestProvider<[Pet]>(endpoint: path, method: "GET", parameters: RequestProvider.Parameters(parameters))
+        let parameters = Parameters(
+            query: ["status": status],
+            form: nil,
+            body: nil)
+        return RequestBuilder<[Pet]>(endpoint: path, method: "GET", parameters: parameters)
     }
 
     /**
@@ -71,15 +83,15 @@ open class PetAPI {
        - type: oauth2
        - name: petstore_auth
      - parameter tags: (query) Tags to filter by 
-     - returns: RequestProvider<[Pet]> 
+     - returns: RequestBuilder<[Pet]> 
      */
-    open class func findPetsByTags(tags: [String]) -> RequestProvider<[Pet]> {
+    public static func findPetsByTags(tags: [String]) -> RequestBuilder<[Pet]> {
         let path = "/pet/findByTags"
-        
-        let parameters: [String: Any?] = [
-            "tags": tags
-        ]
-        return RequestProvider<[Pet]>(endpoint: path, method: "GET", parameters: RequestProvider.Parameters(parameters))
+        let parameters = Parameters(
+            query: ["tags": tags],
+            form: nil,
+            body: nil)
+        return RequestBuilder<[Pet]>(endpoint: path, method: "GET", parameters: parameters)
     }
 
     /**
@@ -90,15 +102,17 @@ open class PetAPI {
        - type: apiKey api_key 
        - name: api_key
      - parameter petId: (path) ID of pet to return 
-     - returns: RequestProvider<Pet> 
+     - returns: RequestBuilder<Pet> 
      */
-    open class func getPetById(petId: Int64) -> RequestProvider<Pet> {
+    public static func getPetById(petId: Int64) -> RequestBuilder<Pet> {
         var path = "/pet/{petId}"
-        let petIdPreEscape = "\(petId)"
-        let petIdPostEscape = petIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: "{petId}", with: petIdPostEscape, options: .literal, range: nil)
-        
-        return RequestProvider<Pet>(endpoint: path, method: "GET")
+        let petIdEscaped = "\(petId)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{petId}", with: petIdEscaped, options: .literal, range: nil)
+        let parameters = Parameters(
+            query: nil,
+            form: nil,
+            body: nil)
+        return RequestBuilder<Pet>(endpoint: path, method: "GET", parameters: parameters)
     }
 
     /**
@@ -107,14 +121,16 @@ open class PetAPI {
      - OAuth:
        - type: oauth2
        - name: petstore_auth
-     - parameter pet: (body) Pet object that needs to be added to the store 
-     - returns: RequestProvider<Void> 
+     - parameter body: (body) Pet object that needs to be added to the store 
+     - returns: RequestBuilder<Void> 
      */
-    open class func updatePet(pet: Pet) -> RequestProvider<Void> {
+    public static func updatePet(body: Pet) -> RequestBuilder<Void> {
         let path = "/pet"
-        let parameters = pet
-
-        return RequestProvider<Void>(endpoint: path, method: "PUT", parameters: RequestProvider.Parameters(parameters))
+        let parameters = Parameters(
+            query: nil,
+            form: nil,
+            body: AnyEncodable(body))
+        return RequestBuilder<Void>(endpoint: path, method: "PUT", parameters: parameters)
     }
 
     /**
@@ -126,19 +142,17 @@ open class PetAPI {
      - parameter petId: (path) ID of pet that needs to be updated 
      - parameter name: (form) Updated name of the pet (optional)
      - parameter status: (form) Updated status of the pet (optional)
-     - returns: RequestProvider<Void> 
+     - returns: RequestBuilder<Void> 
      */
-    open class func updatePetWithForm(petId: Int64, name: String? = nil, status: String? = nil) -> RequestProvider<Void> {
+    public static func updatePetWithForm(petId: Int64, name: String? = nil, status: String? = nil) -> RequestBuilder<Void> {
         var path = "/pet/{petId}"
-        let petIdPreEscape = "\(petId)"
-        let petIdPostEscape = petIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: "{petId}", with: petIdPostEscape, options: .literal, range: nil)
-        let parameters: [String: String?] = [
-            "name": name?.description,
-            "status": status?.description
-        ]
-        
-        return RequestProvider<Void>(endpoint: path, method: "POST", parameters: RequestProvider.Parameters(parameters))
+        let petIdEscaped = "\(petId)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{petId}", with: petIdEscaped, options: .literal, range: nil)
+        let parameters = Parameters(
+            query: nil,
+            form: ["name": name, "status": status],
+            body: nil)
+        return RequestBuilder<Void>(endpoint: path, method: "POST", parameters: parameters)
     }
 
     /**
@@ -150,19 +164,17 @@ open class PetAPI {
      - parameter petId: (path) ID of pet to update 
      - parameter additionalMetadata: (form) Additional data to pass to server (optional)
      - parameter file: (form) file to upload (optional)
-     - returns: RequestProvider<ApiResponse> 
+     - returns: RequestBuilder<ApiResponse> 
      */
-    open class func uploadFile(petId: Int64, additionalMetadata: String? = nil, file: URL? = nil) -> RequestProvider<ApiResponse> {
+    public static func uploadFile(petId: Int64, additionalMetadata: String? = nil, file: URL? = nil) -> RequestBuilder<ApiResponse> {
         var path = "/pet/{petId}/uploadImage"
-        let petIdPreEscape = "\(petId)"
-        let petIdPostEscape = petIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
-        path = path.replacingOccurrences(of: "{petId}", with: petIdPostEscape, options: .literal, range: nil)
-        let parameters: [String: String?] = [
-            "additionalMetadata": additionalMetadata?.description,
-            "file": file?.description
-        ]
-        
-        return RequestProvider<ApiResponse>(endpoint: path, method: "POST", parameters: RequestProvider.Parameters(parameters))
+        let petIdEscaped = "\(petId)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: "{petId}", with: petIdEscaped, options: .literal, range: nil)
+        let parameters = Parameters(
+            query: nil,
+            form: ["additionalMetadata": additionalMetadata, "file": file?.description],
+            body: nil)
+        return RequestBuilder<ApiResponse>(endpoint: path, method: "POST", parameters: parameters)
     }
 
 }

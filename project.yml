@@ -1,0 +1,56 @@
+name: APIClient
+attributes:
+  ORGANIZATIONNAME: "Daiki Matsudate"
+options:
+  bundleIdPrefix: com.d-date
+  defaultConfig: Release
+  deploymentTarget:
+    iOS: 10.0
+    watchOS: 3.0
+    tvOS: 10.0
+    macOS: 10.13
+
+settings:
+  base:
+    TARGETED_DEVICE_FAMILY: 1,2,3,4
+    SWIFT_VERSION: 5.0
+    MTL_FAST_MATH: YES
+    VERSION_INFO_PREFIX: ""
+    VERSIONING_SYSTEM: apple-generic
+
+targets:
+  APIClient:
+    sources: [APIClient]
+    type: framework
+    platform: iOS
+    settings:
+      base:
+        SWIFT_VERSION: 5.0
+        PRODUCT_NAME: $(TARGET_NAME)
+        TARGETED_DEVICE_FAMILY: 1,2,3,4
+    info:
+      path: ./APIClient/Info.plist
+      properties:
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+    scheme:
+      testTargets:
+        - APIClientTests
+      gatherCoverageData: true
+    configFiles:
+      Debug: Pods/Target Support Files/Pods-APIClient/Pods-APIClient.debug.xcconfig
+      Release:  Pods/Target Support Files/Pods-APIClient/Pods-APIClient.release.xcconfig
+
+  APIClientTests:
+    sources: [APIClientTests]
+    type:  bundle.unit-test
+    platform: iOS
+    info:
+      path: ./APIClientTests/Info.plist
+    settings:
+      base:
+        TARGETED_DEVICE_FAMILY: 1,2,3,4
+    configFiles:
+      Debug: Pods/Target Support Files/Pods-APIClientTests/Pods-APIClientTests.debug.xcconfig
+      Release:  Pods/Target Support Files/Pods-APIClientTests/Pods-APIClientTests.release.xcconfig
+
+
