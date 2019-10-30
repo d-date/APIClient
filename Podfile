@@ -5,6 +5,6 @@ target 'APIClient' do
 
   target 'APIClientTests' do
     inherit! :search_paths
-    pod 'Petstore', path: './Examples/Petstore/Petstore.podspec'
+    pod 'PetStore', path: './Examples/PetStore/PetStore.podspec'
   end
 end
