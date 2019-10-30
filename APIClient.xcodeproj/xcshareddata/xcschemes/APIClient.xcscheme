@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1010"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "14DDC19421F4B5DD006E01E8"
+               BlueprintIdentifier = "6D42A85B09075F20C3633E24"
                BuildableName = "APIClient.framework"
                BlueprintName = "APIClient"
                ReferencedContainer = "container:APIClient.xcodeproj">
@@ -26,13 +26,14 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      codeCoverageEnabled = "YES"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "14DDC19D21F4B5DD006E01E8"
+               BlueprintIdentifier = "79F879EBDBDBD7F894E0FE6A"
                BuildableName = "APIClientTests.xctest"
                BlueprintName = "APIClientTests"
                ReferencedContainer = "container:APIClient.xcodeproj">
@@ -42,14 +43,18 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "14DDC19421F4B5DD006E01E8"
+            BlueprintIdentifier = "6D42A85B09075F20C3633E24"
             BuildableName = "APIClient.framework"
             BlueprintName = "APIClient"
             ReferencedContainer = "container:APIClient.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <CommandLineArguments>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
+      <CodeCoverageTargets>
+      </CodeCoverageTargets>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -64,12 +69,14 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "14DDC19421F4B5DD006E01E8"
+            BlueprintIdentifier = "6D42A85B09075F20C3633E24"
             BuildableName = "APIClient.framework"
             BlueprintName = "APIClient"
             ReferencedContainer = "container:APIClient.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+      <CommandLineArguments>
+      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -79,15 +86,18 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "14DDC19421F4B5DD006E01E8"
+            BlueprintIdentifier = "6D42A85B09075F20C3633E24"
             BuildableName = "APIClient.framework"
             BlueprintName = "APIClient"
             ReferencedContainer = "container:APIClient.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
