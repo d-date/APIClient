@@ -19,6 +19,7 @@
 		14DDC1B621F4B795006E01E8 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14DDC1B521F4B795006E01E8 /* Response.swift */; };
 		14E0CC8F2236C607004B1407 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E0CC8E2236C607004B1407 /* Configuration.swift */; };
 		54849B4974998EC222D926EE /* Pods_APIClientTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C6C213BABCC3B2BE09FFECFD /* Pods_APIClientTests.framework */; };
+		620892E88936BC697F7D838F /* Pods_APIClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDE650F9478F1706A1049F6D /* Pods_APIClient.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				620892E88936BC697F7D838F /* Pods_APIClient.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -178,6 +180,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 14DDC1A921F4B5DD006E01E8 /* Build configuration list for PBXNativeTarget "APIClient" */;
 			buildPhases = (
+				E948D14902F1EA0957D83F7D /* [CP] Check Pods Manifest.lock */,
 				14DDC19021F4B5DD006E01E8 /* Headers */,
 				14DDC19121F4B5DD006E01E8 /* Sources */,
 				14DDC19221F4B5DD006E01E8 /* Frameworks */,
@@ -302,6 +305,28 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-APIClientTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E948D14902F1EA0957D83F7D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-APIClient-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
