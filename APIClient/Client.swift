@@ -9,7 +9,7 @@ public class Client {
     public var interceptors = [Intercepting]()
 
     private let session: URLSession
-    private let queue = DispatchQueue.init(label: "com.kankak.coffee.api-client", qos: .userInitiated)
+    private let queue = DispatchQueue.init(label: "com.d-date.APIClient", qos: .userInitiated)
     private let taskExecutor = TaskExecutor()
 
     private var pendingRequests = [PendingRequest]()

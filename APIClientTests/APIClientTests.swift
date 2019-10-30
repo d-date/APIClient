@@ -1,6 +1,6 @@
 import XCTest
 import APIClient
-import Petstore
+import PetStore
 
 class APIClientTests: XCTestCase {
     lazy var client: Client = {
@@ -20,11 +20,11 @@ class APIClientTests: XCTestCase {
 
         let ex = expectation(description: "testAddPet")
 
-        let category = Category(_id: 1234, name: "eyeColor")
-        let tags = [Tag(_id: 1234, name: "New York"), Tag(_id: 124321, name: "Jose")]
-        let newPet = Pet(_id: 1000, category: category, name: "Fluffy", photoUrls: ["https://petstore.com/sample/photo1.jpg", "https://petstore.com/sample/photo2.jpg"], tags: tags, status: .available)
+        let category = Category(id: 1234, name: "eyeColor")
+        let tags = [Tag(id: 1234, name: "New York"), Tag(id: 124321, name: "Jose")]
+        let newPet = Pet(id: 1000, category: category, name: "Fluffy", photoUrls: ["https://petstore.com/sample/photo1.jpg", "https://petstore.com/sample/photo2.jpg"], tags: tags, status: .available)
 
-        client.perform(request: PetAPI.addPet(pet: newPet).request()) {
+        client.perform(request: PetAPI.addPet(body: newPet).request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
@@ -48,7 +48,9 @@ class APIClientTests: XCTestCase {
         client.interceptors = client.interceptors + [Interceptor()]
 
         let ex = expectation(description: "testQueryParameter1")
-        client.perform(request: PetAPI.findPetsByTags(tags: ["kishikawakatsumi+test@gmail.com"]).request()) { _ in
+        let request = PetAPI.findPetsByTags(tags: ["kishikawakatsumi+test@gmail.com"]).request()
+        XCTAssertEqual(request.parameters?.query?.first?.value as? [String], ["kishikawakatsumi+test@gmail.com"])
+        client.perform(request: request) { _ in
             ex.fulfill()
         }
 
@@ -66,7 +68,9 @@ class APIClientTests: XCTestCase {
         client.interceptors = client.interceptors + [Interceptor()]
 
         let ex = expectation(description: "testQueryParameter2")
-        client.perform(request: PetAPI.findPetsByTags(tags: ["a b+c"]).request()) { _ in
+        let request = PetAPI.findPetsByTags(tags: ["a b+c"]).request()
+        XCTAssertEqual(request.parameters?.query?.values.first as? [String], ["a b+c"])
+        client.perform(request: request) { _ in
             ex.fulfill()
         }
 
@@ -96,11 +100,11 @@ class APIClientTests: XCTestCase {
     func testAddPet() {
         let ex = expectation(description: "testAddPet")
 
-        let category = Category(_id: 1234, name: "eyeColor")
-        let tags = [Tag(_id: 1234, name: "New York"), Tag(_id: 124321, name: "Jose")]
-        let newPet = Pet(_id: 1000, category: category, name: "Fluffy", photoUrls: ["https://petstore.com/sample/photo1.jpg", "https://petstore.com/sample/photo2.jpg"], tags: tags, status: .available)
+        let category = Category(id: 1234, name: "eyeColor")
+        let tags = [Tag(id: 1234, name: "New York"), Tag(id: 124321, name: "Jose")]
+        let newPet = Pet(id: 1000, category: category, name: "Fluffy", photoUrls: ["https://petstore.com/sample/photo1.jpg", "https://petstore.com/sample/photo2.jpg"], tags: tags, status: .available)
 
-        client.perform(request: PetAPI.addPet(pet: newPet).request()) {
+        client.perform(request: PetAPI.addPet(body: newPet).request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
@@ -116,11 +120,11 @@ class APIClientTests: XCTestCase {
     func testUpdatePet() {
         let ex = expectation(description: "testUpdatePet")
 
-        let category = Category(_id: 1234, name: "eyeColor")
-        let tags = [Tag(_id: 1234, name: "New York"), Tag(_id: 124321, name: "Jose")]
-        let newPet = Pet(_id: 1000, category: category, name: "Fluffy", photoUrls: ["https://petstore.com/sample/photo1.jpg", "https://petstore.com/sample/photo2.jpg"], tags: tags, status: .available)
+        let category = Category(id: 1234, name: "eyeColor")
+        let tags = [Tag(id: 1234, name: "New York"), Tag(id: 124321, name: "Jose")]
+        let newPet = Pet(id: 1000, category: category, name: "Fluffy", photoUrls: ["https://petstore.com/sample/photo1.jpg", "https://petstore.com/sample/photo2.jpg"], tags: tags, status: .available)
 
-        client.perform(request: PetAPI.updatePet(pet: newPet).request()) {
+        client.perform(request: PetAPI.updatePet(body: newPet).request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
@@ -141,7 +145,7 @@ class APIClientTests: XCTestCase {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
                 let pet = response.body
-                XCTAssertEqual(pet._id, 1000, "invalid id")
+                XCTAssertEqual(pet.id, 1000, "invalid id")
                 XCTAssertEqual(pet.name, "Fluffy", "invalid name")
             case .failure(let error):
                 XCTFail("request failed: \(error)")
@@ -203,13 +207,13 @@ class APIClientTests: XCTestCase {
         let ex = expectation(description: "testPlaceOrder")
 
         let shipDate = Date()
-        let order = Order(_id: 1000, petId: 1000, quantity: 10, shipDate: shipDate, status: .placed, complete: true)
-        client.perform(request: StoreAPI.placeOrder(order: order).request()) {
+        let order = Order(id: 1000, petId: 1000, quantity: 10, shipDate: shipDate, status: .placed, complete: true)
+        client.perform(request: StoreAPI.placeOrder(body: order).request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
 
-                XCTAssert(response.body._id == 1000, "invalid id")
+                XCTAssert(response.body.id == 1000, "invalid id")
                 XCTAssert(response.body.quantity == 10, "invalid quantity")
                 XCTAssert(response.body.status == .placed, "invalid status")
             case .failure(let error):
@@ -225,13 +229,13 @@ class APIClientTests: XCTestCase {
         var ex = expectation(description: "testPlaceOrder")
 
         let shipDate = Date()
-        let order = Order(_id: 1000, petId: 1000, quantity: 10, shipDate: shipDate, status: .placed, complete: true)
-        client.perform(request: StoreAPI.placeOrder(order: order).request()) {
+        let order = Order(id: 1000, petId: 1000, quantity: 10, shipDate: shipDate, status: .placed, complete: true)
+        client.perform(request: StoreAPI.placeOrder(body: order).request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
 
-                XCTAssert(response.body._id == 1000, "invalid id")
+                XCTAssert(response.body.id == 1000, "invalid id")
                 XCTAssert(response.body.quantity == 10, "invalid quantity")
                 XCTAssert(response.body.status == .placed, "invalid status")
             case .failure(let error):
@@ -249,7 +253,7 @@ class APIClientTests: XCTestCase {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
 
-                XCTAssert(response.body._id == 1000, "invalid id")
+                XCTAssert(response.body.id == 1000, "invalid id")
                 XCTAssert(response.body.quantity == 10, "invalid quantity")
                 XCTAssert(response.body.status == .placed, "invalid status")
             case .failure(let error):

@@ -12,9 +12,9 @@ public struct Request<ResponseBody> {
     }
 
     public struct Parameters {
-        let query: [String: Any?]?
-        let form: [String: String?]?
-        let json: Data?
+        public let query: [String: Any?]?
+        public let form: [String: String?]?
+        public let json: Data?
 
         public init<T: Encodable>(query: [String: Any?]?, form: [String: String?]?, jsonRaw: T?, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .iso8601, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy = .base64) {
             self.query = query
@@ -46,19 +46,18 @@ public struct Request<ResponseBody> {
             return request
         }
 
-        request.url = components.url
-
         if let query = parameters.query {
             var queryItems = [URLQueryItem]()
             for (key, value) in query {
                 switch value {
                 case let values as [Any?]:
-                    queryItems.append(contentsOf: values.compactMap {
+                    let items: [URLQueryItem] = values.compactMap {
                         if let value = $0 {
                             return URLQueryItem(name: key, value: "\(value)")
                         }
                         return nil
-                    })
+                    }
+                    queryItems.append(contentsOf: items)
 
                 case let value?:
                     queryItems.append(URLQueryItem(name: key, value: "\(value)"))
@@ -82,10 +81,14 @@ public struct Request<ResponseBody> {
                 request.httpBody = query.data(using: .utf8)
             }
         }
+
         if let json = parameters.json {
             request.addValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
             request.httpBody = json
         }
+
+        request.url = components.url
+
         return request
     }
 }
