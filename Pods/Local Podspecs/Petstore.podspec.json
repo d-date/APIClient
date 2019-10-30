@@ -13,6 +13,6 @@
   "authors": "Daiki Matsudate",
   "license": "Proprietary",
   "homepage": "https://github.com/d-date/APIClient",
-  "summary": "API Clinent for Petstore",
+  "summary": "API Clinent for PetStore",
   "source_files": "PetStore/Classes/**/*.swift"
 }
