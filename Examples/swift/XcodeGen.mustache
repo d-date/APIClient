@@ -1,0 +1,17 @@
+name: {{projectName}}
+targets:
+  {{projectName}}:
+    type: framework
+    platform: iOS
+    deploymentTarget: "10.0"
+    sources: [{{projectName}}]
+    info:
+      path: ./Info.plist
+      version: {{#podVersion}}{{podVersion}}{{/podVersion}}{{^podVersion}}{{#apiInfo}}{{version}}{{/apiInfo}}{{^apiInfo}}}0.0.1{{/apiInfo}}{{/podVersion}}
+    settings:
+      ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES: ${inherited}
+      CODE_SIGN_STYLE: Automatic{{#bundleIdentifier}}
+      PRODUCT_BUNDLE_IDENTIFIER: {{bundleIdentifier}}{{/bundleIdentifier}}
+      APPLICATION_EXTENSION_API_ONLY: true
+      SWIFT_VERSION: 5.0
+    scheme: {}
