@@ -36,7 +36,8 @@ public class Client {
     }
 
     public func append(header: [AnyHashable: Any]) {
-        session.configuration.httpAdditionalHeaders?.merge(header, uniquingKeysWith: { $1 })
+        self.headers.merge(header, uniquingKeysWith: { $1 })
+        session.configuration.httpAdditionalHeaders = headers
     }
 
     public func cancel(taskIdentifier: Int) {

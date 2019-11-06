@@ -296,4 +296,10 @@ class APIClientTests: XCTestCase {
 
         waitForExpectations(timeout: 10)
     }
+
+    func testAppendHeader() {
+        let header = ["Test": "TestValue"]
+        client.append(header: header)
+        XCTAssertEqual(client.headers as! [String: String], header)
+    }
 }
