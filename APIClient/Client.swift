@@ -2,7 +2,7 @@ import Foundation
 
 public class Client {
     public let baseURL: URL
-    public var headers: [AnyHashable: Any]
+    public private(set)var headers: [AnyHashable: Any]
     public let configuration: Configuration
 
     public var authenticator: Authenticating?
@@ -33,6 +33,10 @@ public class Client {
         config.timeoutIntervalForResource = configuration.timeoutIntervalForResource
 
         session = URLSession(configuration: config)
+    }
+
+    public func append(header: [AnyHashable: Any]) {
+        session.configuration.httpAdditionalHeaders?.merge(header, uniquingKeysWith: { $1 })
     }
 
     public func cancel(taskIdentifier: Int) {
