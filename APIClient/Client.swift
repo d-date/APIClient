@@ -45,7 +45,7 @@ public class Client {
 
     public func perform<ResponseBody>(request: Request<ResponseBody>, completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
         queue.async {
-            self.perform(request: request.makeURLRequest(baseURL: self.baseURL), completion: completion)
+            self.perform(request: request.makeURLRequest(baseURL: self.baseURL, headers: self.headers), completion: completion)
         }
     }
 

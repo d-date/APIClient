@@ -35,11 +35,17 @@ public struct Request<ResponseBody> {
         }
     }
 
-    func makeURLRequest(baseURL: URL) -> URLRequest {
+    func makeURLRequest(baseURL: URL, headers: [AnyHashable: Any]) -> URLRequest {
         let url = baseURL.appendingPathComponent(endpoint)
 
         var request = URLRequest(url: url)
         request.httpMethod = method.description
+
+        headers.forEach {
+            if let key = $0.key as? String, let value = $0.value as? String {
+                request.addValue(value, forHTTPHeaderField: key)
+            }
+        }
 
         guard let parameters = parameters,
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
