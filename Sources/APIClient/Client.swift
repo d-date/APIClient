@@ -53,7 +53,7 @@ public class Client {
 
     private func perform<ResponseBody>(request: URLRequest, completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
         interceptRequest(interceptors: self.interceptors, request: request) { [weak self] request in
-            guard let self = self else { return }
+            guard let self = self else { fatalError() }
 
             let task = self.session.dataTask(with: request) { data, response, error in
                 self.queue.async {
@@ -156,7 +156,7 @@ public class Client {
                             retry: { self.perform(request: request, completion: completion) },
                             fail: { error in q.async { completion(.failure(error)) } },
                             cancel: { _ in q.async { completion(.failure(.responseError(statusCode, response.allHeaderFields, data))) }
-                        })
+                            })
                         pendingRequests.append(pendingRequest)
                     }
                 } else {
