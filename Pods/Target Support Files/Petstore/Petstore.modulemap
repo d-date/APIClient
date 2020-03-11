@@ -1,6 +1,0 @@
-framework module PetStore {
-  umbrella header "PetStore-umbrella.h"
-
-  export *
-  module * { export * }
-}
