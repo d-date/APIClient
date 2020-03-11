@@ -8,6 +8,7 @@ Pod::Spec.new do |s|
   s.authors = 'Daiki Matsudate'
   s.license = 'Proprietary'
   s.homepage = 'https://github.com/d-date/APIClient'
-  s.summary = 'API Clinent for PetStore'
+  s.summary = 'API Clinent for Petstore'
   s.source_files = 'PetStore/Classes/**/*.swift'
+    s.dependency 'Alamofire', '~> 4.7.0'
 end
