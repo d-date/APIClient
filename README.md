@@ -4,7 +4,7 @@
 
 # APIClient
 
-APIClient is a client library for OpenAPI. It makes OpenAPI generated code remarkably more straightforward than the default one. 
+APIClient is a client library for OpenAPI. It makes OpenAPI generated code remarkably more straightforward than the default one.
 
 The generated code by  Open API is a strongly tied scheme definition and networking code. It makes debugging and logging difficult. This library separates networking code from OpenAPI generated code, and you can depend on only schema and model definitions.
 
@@ -29,7 +29,7 @@ open class PetAPI {
         path = path.replacingOccurrences(of: "{petId}", with: petIdPostEscape, options: .literal, range: nil)
         let URLString = PetstoreAPI.basePath + path
         let parameters: [String:Any]? = nil
-        
+
         let url = URLComponents(string: URLString)
 
         let requestBuilder: RequestBuilder<Pet>.Type = PetstoreAPI.requestBuilderFactory.getBuilder()
@@ -50,7 +50,7 @@ open class PetAPI {
         let petIdPreEscape = "\(petId)"
         let petIdPostEscape = petIdPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{petId}", with: petIdPostEscape, options: .literal, range: nil)
-        
+
         return RequestProvider<Pet>(endpoint: path, method: "GET")
     }
     ...
@@ -108,12 +108,14 @@ client.perform(request: PetAPI.getPetById(petId: 1000).request()) {
 
 ## Installation ##
 
+### [Swift Package Manager] ###
+
 ### [Carthage] ###
 
 [Carthage]: https://github.com/Carthage/Carthage
 
 ```
-github "folio-sec/APIClient"
+github "d-date/APIClient"
 ```
 
 Then run `carthage update`.

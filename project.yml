@@ -40,8 +40,8 @@ targets:
       Debug: Pods/Target Support Files/Pods-APIClient/Pods-APIClient.debug.xcconfig
       Release:  Pods/Target Support Files/Pods-APIClient/Pods-APIClient.release.xcconfig
 
-  APIClientTests:
-    sources: [APIClientTests]
+  Tests:
+    sources: [Tests]
     type:  bundle.unit-test
     platform: iOS
     info:
