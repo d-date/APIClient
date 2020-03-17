@@ -43,11 +43,11 @@ public class Client {
         taskExecutor.cancelAll()
     }
 
-    public func perform<ResponseBody>(request: Request<ResponseBody>, completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
+    public func perform<ResponseBody>(request: Request<ResponseBody>, headers: [String: String] = [:], completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
         queue.async { [weak self] in
             guard let self = self else { return }
 
-            self.perform(request: request.makeURLRequest(baseURL: self.baseURL, headers: self.headers), completion: completion)
+            self.perform(request: request.makeURLRequest(baseURL: self.baseURL, headers: headers), completion: completion)
         }
     }
 
