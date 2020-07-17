@@ -12,6 +12,14 @@ public struct Response<ResponseBody> {
     }
 }
 
+extension Response: Equatable where ResponseBody: Equatable {
+    public static func == (lhs: Response<ResponseBody>, rhs: Response<ResponseBody>) -> Bool {
+        lhs.statusCode == rhs.statusCode
+            && NSDictionary(dictionary: lhs.headers).isEqual(to: rhs.headers)
+            && lhs.body == rhs.body
+    }
+}
+
 public enum Failure: Error {
     case networkError(Error)
     case decodingError(Error, Int, [AnyHashable: Any], Data)
