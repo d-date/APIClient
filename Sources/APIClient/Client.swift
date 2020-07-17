@@ -1,5 +1,7 @@
 import Foundation
 
+public struct Empty: Equatable, Codable {}
+
 public class Client {
     public let baseURL: URL
     public var headers: [AnyHashable: Any]
@@ -43,7 +45,7 @@ public class Client {
         taskExecutor.cancelAll()
     }
 
-    public func perform<ResponseBody>(request: Request<ResponseBody>, headers: [String: String] = [:], completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
+    public func perform<ResponseBody: Equatable>(request: Request<ResponseBody>, headers: [String: String] = [:], completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
         queue.async { [weak self] in
             guard let self = self else { return }
 
@@ -51,7 +53,7 @@ public class Client {
         }
     }
 
-    private func perform<ResponseBody>(request: URLRequest, completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
+    private func perform<ResponseBody: Equatable>(request: URLRequest, completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
         interceptRequest(interceptors: self.interceptors, request: request) { [weak self] request in
             guard let self = self else { fatalError() }
 
@@ -71,7 +73,7 @@ public class Client {
         }
     }
 
-    private func handleResponse<ResponseBody>(request: URLRequest, response: URLResponse?, data: Data?, error: Error?, completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
+    private func handleResponse<ResponseBody: Equatable>(request: URLRequest, response: URLResponse?, data: Data?, error: Error?, completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
         let q = configuration.queue
 
         if let error = error {
@@ -93,10 +95,9 @@ public class Client {
                         completion(.success(Response(statusCode: response.statusCode, headers: response.allHeaderFields, body: (String(data: data, encoding: .utf8) ?? "") as! ResponseBody)))
                     }
 
-                case is Void.Type:
+                case is Empty.Type:
                     q.async {
-                        //swiftlint:disable:next force_cast
-                        completion(.success(Response(statusCode: response.statusCode, headers: response.allHeaderFields, body: () as! ResponseBody)))
+                        completion(.success(Response(statusCode: response.statusCode, headers: response.allHeaderFields, body: Empty() as! ResponseBody)))
                     }
 
                 case let decodableType as Decodable.Type:
