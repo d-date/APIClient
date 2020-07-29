@@ -13,9 +13,9 @@ public struct StoreAPI {
      - DELETE /store/order/{orderId}
      - For valid response try integer IDs with positive integer value. Negative or non-integer values will generate API errors
      - parameter orderId: (path) ID of the order that needs to be deleted 
-     - returns: RequestBuilder<Empty> 
+     - returns: RequestBuilder<Void> 
      */
-    public static func deleteOrder(orderId: Int64) -> RequestBuilder<Empty> {
+    public static func deleteOrder(orderId: Int64) -> RequestBuilder<Void> {
         var path = "/store/order/{orderId}"
         let orderIdEscaped = "\(orderId)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{orderId}", with: orderIdEscaped, options: .literal, range: nil)
@@ -23,7 +23,7 @@ public struct StoreAPI {
             query: nil,
             form: nil,
             body: nil)
-        return RequestBuilder<Empty>(endpoint: path, method: "DELETE", parameters: parameters)
+        return RequestBuilder<Void>(endpoint: path, method: "DELETE", parameters: parameters)
     }
 
     /**

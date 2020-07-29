@@ -15,15 +15,15 @@ public struct PetAPI {
        - type: oauth2
        - name: petstore_auth
      - parameter body: (body) Pet object that needs to be added to the store 
-     - returns: RequestBuilder<Empty> 
+     - returns: RequestBuilder<Void>
      */
-    public static func addPet(body: Pet) -> RequestBuilder<Empty> {
+    public static func addPet(body: Pet) -> RequestBuilder<Void> {
         let path = "/pet"
         let parameters = Parameters(
             query: nil,
             form: nil,
             body: AnyEncodable(body))
-        return RequestBuilder<Empty>(endpoint: path, method: "POST", parameters: parameters)
+        return RequestBuilder<Void>(endpoint: path, method: "POST", parameters: parameters)
     }
 
     /**
@@ -34,9 +34,9 @@ public struct PetAPI {
        - name: petstore_auth
      - parameter petId: (path) Pet id to delete 
      - parameter apiKey: (header)  (optional)
-     - returns: RequestBuilder<Empty> 
+     - returns: RequestBuilder<Void>
      */
-    public static func deletePet(petId: Int64, apiKey: String? = nil) -> RequestBuilder<Empty> {
+    public static func deletePet(petId: Int64, apiKey: String? = nil) -> RequestBuilder<Void> {
         var path = "/pet/{petId}"
         let petIdEscaped = "\(petId)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{petId}", with: petIdEscaped, options: .literal, range: nil)
@@ -44,7 +44,7 @@ public struct PetAPI {
             query: nil,
             form: nil,
             body: nil)
-        return RequestBuilder<Empty>(endpoint: path, method: "DELETE", parameters: parameters)
+        return RequestBuilder<Void>(endpoint: path, method: "DELETE", parameters: parameters)
     }
 
     /**
@@ -122,15 +122,15 @@ public struct PetAPI {
        - type: oauth2
        - name: petstore_auth
      - parameter body: (body) Pet object that needs to be added to the store 
-     - returns: RequestBuilder<Empty> 
+     - returns: RequestBuilder<Void>
      */
-    public static func updatePet(body: Pet) -> RequestBuilder<Empty> {
+    public static func updatePet(body: Pet) -> RequestBuilder<Void> {
         let path = "/pet"
         let parameters = Parameters(
             query: nil,
             form: nil,
             body: AnyEncodable(body))
-        return RequestBuilder<Empty>(endpoint: path, method: "PUT", parameters: parameters)
+        return RequestBuilder<Void>(endpoint: path, method: "PUT", parameters: parameters)
     }
 
     /**
@@ -142,9 +142,9 @@ public struct PetAPI {
      - parameter petId: (path) ID of pet that needs to be updated 
      - parameter name: (form) Updated name of the pet (optional)
      - parameter status: (form) Updated status of the pet (optional)
-     - returns: RequestBuilder<Empty> 
+     - returns: RequestBuilder<Void>
      */
-    public static func updatePetWithForm(petId: Int64, name: String? = nil, status: String? = nil) -> RequestBuilder<Empty> {
+    public static func updatePetWithForm(petId: Int64, name: String? = nil, status: String? = nil) -> RequestBuilder<Void> {
         var path = "/pet/{petId}"
         let petIdEscaped = "\(petId)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{petId}", with: petIdEscaped, options: .literal, range: nil)
@@ -152,7 +152,7 @@ public struct PetAPI {
             query: nil,
             form: ["name": name, "status": status],
             body: nil)
-        return RequestBuilder<Empty>(endpoint: path, method: "POST", parameters: parameters)
+        return RequestBuilder<Void>(endpoint: path, method: "POST", parameters: parameters)
     }
 
     /**
