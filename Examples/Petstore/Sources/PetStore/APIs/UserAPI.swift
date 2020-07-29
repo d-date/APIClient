@@ -13,45 +13,45 @@ public struct UserAPI {
      - POST /user
      - This can only be done by the logged in user.
      - parameter body: (body) Created user object 
-     - returns: RequestBuilder<Empty>
+     - returns: RequestBuilder<Void>
      */
-    public static func createUser(body: User) -> RequestBuilder<Empty> {
+    public static func createUser(body: User) -> RequestBuilder<Void> {
         let path = "/user"
         let parameters = Parameters(
             query: nil,
             form: nil,
             body: AnyEncodable(body))
-        return RequestBuilder<Empty>(endpoint: path, method: "POST", parameters: parameters)
+        return RequestBuilder<Void>(endpoint: path, method: "POST", parameters: parameters)
     }
 
     /**
      Creates list of users with given input array
      - POST /user/createWithArray
      - parameter body: (body) List of user object 
-     - returns: RequestBuilder<Empty>
+     - returns: RequestBuilder<Void>
      */
-    public static func createUsersWithArrayInput(body: [User]) -> RequestBuilder<Empty> {
+    public static func createUsersWithArrayInput(body: [User]) -> RequestBuilder<Void> {
         let path = "/user/createWithArray"
         let parameters = Parameters(
             query: nil,
             form: nil,
             body: AnyEncodable(body))
-        return RequestBuilder<Empty>(endpoint: path, method: "POST", parameters: parameters)
+        return RequestBuilder<Void>(endpoint: path, method: "POST", parameters: parameters)
     }
 
     /**
      Creates list of users with given input array
      - POST /user/createWithList
      - parameter body: (body) List of user object 
-     - returns: RequestBuilder<Empty>
+     - returns: RequestBuilder<Void>
      */
-    public static func createUsersWithListInput(body: [User]) -> RequestBuilder<Empty> {
+    public static func createUsersWithListInput(body: [User]) -> RequestBuilder<Void> {
         let path = "/user/createWithList"
         let parameters = Parameters(
             query: nil,
             form: nil,
             body: AnyEncodable(body))
-        return RequestBuilder<Empty>(endpoint: path, method: "POST", parameters: parameters)
+        return RequestBuilder<Void>(endpoint: path, method: "POST", parameters: parameters)
     }
 
     /**
@@ -59,9 +59,9 @@ public struct UserAPI {
      - DELETE /user/{username}
      - This can only be done by the logged in user.
      - parameter username: (path) The name that needs to be deleted 
-     - returns: RequestBuilder<Empty>
+     - returns: RequestBuilder<Void>
      */
-    public static func deleteUser(username: String) -> RequestBuilder<Empty> {
+    public static func deleteUser(username: String) -> RequestBuilder<Void> {
         var path = "/user/{username}"
         let usernameEscaped = "\(username)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{username}", with: usernameEscaped, options: .literal, range: nil)
@@ -69,7 +69,7 @@ public struct UserAPI {
             query: nil,
             form: nil,
             body: nil)
-        return RequestBuilder<Empty>(endpoint: path, method: "DELETE", parameters: parameters)
+        return RequestBuilder<Void>(endpoint: path, method: "DELETE", parameters: parameters)
     }
 
     /**
@@ -109,11 +109,11 @@ public struct UserAPI {
     /**
      Logs out current logged in user session
      - GET /user/logout
-     - returns: RequestBuilder<Empty>
+     - returns: RequestBuilder<Void>
      */
-    public static func logoutUser() -> RequestBuilder<Empty> {
+    public static func logoutUser() -> RequestBuilder<Void> {
         let path = "/user/logout"
-        return RequestBuilder<Empty>(endpoint: path, method: "GET")
+        return RequestBuilder<Void>(endpoint: path, method: "GET")
     }
 
     /**
@@ -122,9 +122,9 @@ public struct UserAPI {
      - This can only be done by the logged in user.
      - parameter username: (path) name that need to be updated 
      - parameter body: (body) Updated user object 
-     - returns: RequestBuilder<Empty>
+     - returns: RequestBuilder<Void>
      */
-    public static func updateUser(username: String, body: User) -> RequestBuilder<Empty> {
+    public static func updateUser(username: String, body: User) -> RequestBuilder<Void> {
         var path = "/user/{username}"
         let usernameEscaped = "\(username)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
         path = path.replacingOccurrences(of: "{username}", with: usernameEscaped, options: .literal, range: nil)
@@ -132,7 +132,7 @@ public struct UserAPI {
             query: nil,
             form: nil,
             body: AnyEncodable(body))
-        return RequestBuilder<Empty>(endpoint: path, method: "PUT", parameters: parameters)
+        return RequestBuilder<Void>(endpoint: path, method: "PUT", parameters: parameters)
     }
 
 }
