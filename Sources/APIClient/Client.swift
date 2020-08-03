@@ -43,7 +43,36 @@ public class Client {
         taskExecutor.cancelAll()
     }
 
-    public func perform<ResponseBody>(request: Request<ResponseBody>, headers: [String: String] = [:], completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
+    public func post(request: Request<Void>, headers: [String: String] = [:], completion: @escaping (Result<EmptyResponse, Failure>) -> Void) {
+        queue.async { [weak self] in
+            guard let self = self else { return }
+
+            self.post(request: request.makeURLRequest(baseURL: self.baseURL, headers: headers), completion: completion)
+        }
+    }
+
+    private func post(request: URLRequest, completion: @escaping (Result<EmptyResponse, Failure>) -> Void) {
+        interceptRequest(interceptors: self.interceptors, request: request) { [weak self] request in
+            guard let self = self else { fatalError() }
+
+            let task = self.session.dataTask(with: request) { data, response, error in
+                self.queue.async {
+                    self.interceptResponse(interceptors: self.interceptors, request: request, response: response, data: data, error: error) { [weak self] response, data, error in
+                        guard let self = self else { return }
+
+                        self.queue.async {
+                            self.handleEmptyResponse(request: request, response: response, data: data, error: error, completion: completion)
+                        }
+                    }
+                    self.taskExecutor.startPendingTasks()
+                }
+            }
+            self.taskExecutor.push(Task(sessionTask: task))
+        }
+    }
+
+
+    public func perform<ResponseBody>(request: Request<ResponseBody>, headers: [String: String] = [:], completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) where ResponseBody: Equatable {
         queue.async { [weak self] in
             guard let self = self else { return }
 
@@ -51,7 +80,7 @@ public class Client {
         }
     }
 
-    private func perform<ResponseBody>(request: URLRequest, completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
+    private func perform<ResponseBody: Equatable>(request: URLRequest, completion: @escaping (Result<Response<ResponseBody>, Failure>) -> Void) {
         interceptRequest(interceptors: self.interceptors, request: request) { [weak self] request in
             guard let self = self else { fatalError() }
 
@@ -68,6 +97,85 @@ public class Client {
                 }
             }
             self.taskExecutor.push(Task(sessionTask: task))
+        }
+    }
+
+    private func handleEmptyResponse(request: URLRequest, response: URLResponse?, data: Data?, error: Error?, completion: @escaping (Result<EmptyResponse, Failure>) -> Void) {
+        let q = configuration.queue
+
+        if let error = error {
+            q.async {
+                completion(.failure(.networkError(error)))
+            }
+        }
+
+        if let response = response as? HTTPURLResponse, let data = data {
+            let statusCode = response.statusCode
+            switch statusCode {
+            case 100...199: // Informational
+                break
+            case 200...299: // Success
+                q.async {
+                    completion(.success(.init(statusCode: response.statusCode, headers: response.allHeaderFields)))
+                }
+            case 300...399: // Redirection
+                break
+            case 400...499: // Client Error
+                if let authenticator = self.authenticator, authenticator.shouldRetry(client: self, request: request, response: response, data: data) {
+                    if !isRetrying {
+                        isRetrying = true
+
+                        self.authenticate(authenticator: authenticator, request: request, response: response, data: data) { [weak self] result in
+                            guard let self = self else { return }
+
+                            self.queue.async { [weak self] in
+                                guard let self = self else { return }
+
+                                switch result {
+                                case .success(let request):
+                                    self.post(request: request, completion: completion)
+                                    self.retryPendingRequests()
+
+                                case .failure(let error):
+                                    q.async {
+                                        completion(.failure(error))
+                                    }
+                                    self.failPendingRequests(error)
+
+                                case .cancel:
+                                    let error = Failure.responseError(statusCode, response.allHeaderFields, data)
+                                    q.async {
+                                        completion(.failure(error))
+                                    }
+                                    self.cancelPendingRequests(error)
+                                }
+
+                                self.isRetrying = false
+                            }
+                        }
+                    } else {
+                        let pendingRequest = PendingRequest(
+                            request: request,
+                            retry: { self.post(request: request, completion: completion) },
+                            fail: { error in q.async { completion(.failure(error)) } },
+                            cancel: { _ in q.async { completion(.failure(.responseError(statusCode, response.allHeaderFields, data))) }
+                        })
+                        pendingRequests.append(pendingRequest)
+                    }
+                } else {
+                    q.async {
+                        completion(.failure(.responseError(statusCode, response.allHeaderFields, data)))
+                    }
+                }
+            case 500...599: // Server Error
+                q.async {
+                    completion(.failure(.responseError(statusCode, response.allHeaderFields, data)))
+                }
+
+            default:
+                break
+            }
+
         }
     }
 
@@ -155,7 +263,7 @@ public class Client {
                             retry: { self.perform(request: request, completion: completion) },
                             fail: { error in q.async { completion(.failure(error)) } },
                             cancel: { _ in q.async { completion(.failure(.responseError(statusCode, response.allHeaderFields, data))) }
-                            })
+                        })
                         pendingRequests.append(pendingRequest)
                     }
                 } else {

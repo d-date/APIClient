@@ -20,6 +20,20 @@ public struct RequestBuilder<Response> {
     }
 }
 
+public struct PostRequestBuilder {
+    public let endpoint: String
+    public let method: String
+    public let parameters: Parameters?
+    public let headers: [String : String]
+
+    public init(endpoint: String, method: String, parameters: Parameters? = nil, headers: [String : String] = [:]) {
+        self.endpoint = endpoint
+        self.method = method
+        self.parameters = parameters
+        self.headers = headers
+    }
+}
+
 public struct Parameters {
     public var query: [String: Any?]?
     public var form: [String: String?]?
