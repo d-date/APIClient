@@ -12,18 +12,18 @@ public struct Response<ResponseBody> {
     }
 }
 
+extension Response: Equatable where ResponseBody: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.statusCode == rhs.statusCode
+            && NSDictionary(dictionary: lhs.headers).isEqual(to: rhs.headers)
+            && lhs.body == rhs.body
+    }
+}
+
 extension Response where ResponseBody == Void {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.statusCode == rhs.statusCode
             && NSDictionary(dictionary: lhs.headers).isEqual(to: rhs.headers)
-    }
-}
-
-extension Response where ResponseBody: Equatable {
-    public static func == (lhs: Response<ResponseBody>, rhs: Response<ResponseBody>) -> Bool {
-        lhs.statusCode == rhs.statusCode
-            && NSDictionary(dictionary: lhs.headers).isEqual(to: rhs.headers)
-            && lhs.body == rhs.body
     }
 }
 
