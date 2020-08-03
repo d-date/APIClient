@@ -24,7 +24,7 @@ class APIClientTests: XCTestCase {
         let tags = [Tag(id: 1234, name: "New York"), Tag(id: 124321, name: "Jose")]
         let newPet = Pet(id: 1000, category: category, name: "Fluffy", photoUrls: ["https://petstore.com/sample/photo1.jpg", "https://petstore.com/sample/photo2.jpg"], tags: tags, status: .available)
 
-        client.perform(request: PetAPI.addPet(body: newPet).request()) {
+        client.post(request: PetAPI.addPet(body: newPet).request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
@@ -90,7 +90,7 @@ class APIClientTests: XCTestCase {
         client.interceptors = client.interceptors + [Interceptor()]
 
         let ex = expectation(description: "testFormParameter1")
-        client.perform(request: PetAPI.updatePetWithForm(petId: 0, name: "kishikawakatsumi+test@gmail.com", status: nil).request()) { _ in
+        client.post(request: PetAPI.updatePetWithForm(petId: 0, name: "kishikawakatsumi+test@gmail.com", status: nil).request()) { _ in
             ex.fulfill()
         }
 
@@ -104,7 +104,7 @@ class APIClientTests: XCTestCase {
         let tags = [Tag(id: 1234, name: "New York"), Tag(id: 124321, name: "Jose")]
         let newPet = Pet(id: 1000, category: category, name: "Fluffy", photoUrls: ["https://petstore.com/sample/photo1.jpg", "https://petstore.com/sample/photo2.jpg"], tags: tags, status: .available)
 
-        client.perform(request: PetAPI.addPet(body: newPet).request()) {
+        client.post(request: PetAPI.addPet(body: newPet).request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
@@ -124,7 +124,7 @@ class APIClientTests: XCTestCase {
         let tags = [Tag(id: 1234, name: "New York"), Tag(id: 124321, name: "Jose")]
         let newPet = Pet(id: 1000, category: category, name: "Fluffy", photoUrls: ["https://petstore.com/sample/photo1.jpg", "https://petstore.com/sample/photo2.jpg"], tags: tags, status: .available)
 
-        client.perform(request: PetAPI.updatePet(body: newPet).request()) {
+        client.post(request: PetAPI.updatePet(body: newPet).request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
@@ -159,7 +159,7 @@ class APIClientTests: XCTestCase {
     func testUpdatePetWithForm() {
         let ex = expectation(description: "")
 
-        self.client.perform(request: PetAPI.updatePetWithForm(petId: 1000, name: "Fluffy", status: Pet.Status.available.rawValue).request()) {
+        self.client.post(request: PetAPI.updatePetWithForm(petId: 1000, name: "Fluffy", status: Pet.Status.available.rawValue).request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
@@ -174,7 +174,7 @@ class APIClientTests: XCTestCase {
     func testDeletePet() {
         let ex = expectation(description: "testDeletePet")
 
-        client.perform(request: PetAPI.deletePet(petId: 1000).request()) {
+        client.post(request: PetAPI.deletePet(petId: 1000).request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
@@ -284,7 +284,7 @@ class APIClientTests: XCTestCase {
     func testLogoutUser() {
         let ex = expectation(description: "testLogoutUser")
 
-        client.perform(request: UserAPI.logoutUser().request()) {
+        client.post(request: UserAPI.logoutUser().request()) {
             switch $0 {
             case .success(let response):
                 XCTAssertEqual(response.statusCode, 200)
