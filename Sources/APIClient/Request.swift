@@ -12,11 +12,22 @@ public struct Request<ResponseBody> {
     }
 
     public struct Parameters {
+        public struct Form {
+            var parameters: [String: String?]
+            var allowedCharacters: CharacterSet
+
+            public init?(parameters: [String: String?]?, allowedCharacters: CharacterSet = .alphanumerics) {
+                guard let parameters = parameters else { return nil }
+                self.parameters = parameters
+                self.allowedCharacters = allowedCharacters
+            }
+        }
+
         public let query: [String: Any?]?
-        public let form: [String: String?]?
+        public let form: Form?
         public let json: Data?
 
-        public init<T: Encodable>(query: [String: Any?]?, form: [String: String?]?, jsonRaw: T?, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .iso8601, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy = .base64) {
+        public init<T: Encodable>(query: [String: Any?]?, form: Form?, jsonRaw: T?, dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .iso8601, dataEncodingStrategy: JSONEncoder.DataEncodingStrategy = .base64) {
             self.query = query
             self.form = form
 
@@ -73,9 +84,10 @@ public struct Request<ResponseBody> {
             components.queryItems = queryItems
         }
         if let raw = parameters.form {
-            components.queryItems?.append(contentsOf: raw.compactMap {
-                if let value = $0.value {
-                    return URLQueryItem(name: $0.key, value: value.addingPercentEncoding(withAllowedCharacters: .alphanumerics))
+            components.queryItems?.append(contentsOf: raw.parameters.compactMap {
+                if let value = $0.value?.addingPercentEncoding(withAllowedCharacters: raw.allowedCharacters),
+                    let key = $0.key.addingPercentEncoding(withAllowedCharacters: raw.allowedCharacters) {
+                    return URLQueryItem(name: key, value: value)
                 }
                 return nil
             })
