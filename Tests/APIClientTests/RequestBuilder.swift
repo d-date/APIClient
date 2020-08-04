@@ -9,7 +9,7 @@ extension RequestBuilder {
             let form = parameters.form
             let json = parameters.body
 
-            return Request<Response>(endpoint: endpoint, method: method, parameters: Request.Parameters(query: query, form: form, jsonRaw: json))
+            return Request<Response>(endpoint: endpoint, method: method, parameters: Request.Parameters(query: query, form: Request.Parameters.Form(parameters: form), jsonRaw: json))
         }
         return Request(endpoint: endpoint, method: method)
     }
@@ -22,7 +22,7 @@ extension PostRequestBuilder {
             let form = parameters.form
             let json = parameters.body
 
-            return Request<Void>(endpoint: endpoint, method: method, parameters: Request.Parameters(query: query, form: form, jsonRaw: json))
+            return Request<Void>(endpoint: endpoint, method: method, parameters: Request.Parameters(query: query, form: Request.Parameters.Form(parameters: form), jsonRaw: json))
         }
         return Request(endpoint: endpoint, method: method)
     }
