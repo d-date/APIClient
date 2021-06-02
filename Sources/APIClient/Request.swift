@@ -46,7 +46,7 @@ public struct Request<ResponseBody> {
         }
     }
 
-    func makeURLRequest(baseURL: URL, headers: [String: String]) -> URLRequest {
+    public func makeURLRequest(baseURL: URL, headers: [String: String]) -> URLRequest {
         let url = baseURL.appendingPathComponent(endpoint)
 
         var request = URLRequest(url: url)
